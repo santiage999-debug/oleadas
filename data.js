@@ -40,16 +40,16 @@ export const FUSIONS = [
   ['escopeta','congelador','granizo'], ['nova','aura','sol'],
 ];
 export const FAMS = {
-  zombi:   {name:'Zombi',color:0x5f9a3a,eye:0xff2a2a,mesh:0,boss:'Rey Zombi'},
-  monstruo:{name:'Monstruo',color:0x8a3fb0,eye:0xffe23a,mesh:1,boss:'Behemot'},
-  alien:   {name:'Alien',color:0x3fc1c9,eye:0x7aff4a,mesh:2,boss:'Nave Nodriza'},
+  zombi:   {name:'Zombi',blood:[0.42,0.03,0.02],eye:0xff3a2a,boss:'Rey Zombi'},
+  monstruo:{name:'Mutante',blood:[0.32,0.06,0.38],eye:0xffd23a,boss:'Archidemonio'},
+  alien:   {name:'Alien',blood:[0.35,0.85,0.12],eye:0x7aff4a,boss:'Señor de la Colmena'},
 };
 export const ROLES = {
   normal:   {hp:20,spd:2.6,r:0.55,dmg:10,xp:1,s:1},
-  rapido:   {hp:11,spd:5,r:0.45,dmg:7,xp:1,s:0.8,tint:0xffffff},
+  rapido:   {hp:11,spd:5,r:0.45,dmg:7,xp:1,s:0.8},
   tanque:   {hp:110,spd:1.6,r:0.95,dmg:22,xp:5,s:1.7},
   tirador:  {hp:18,spd:2.2,r:0.5,dmg:8,xp:2,s:0.95,ranged:1},
-  explosivo:{hp:14,spd:3.8,r:0.5,dmg:30,xp:2,s:0.9,explode:1,tint:0xff6a1a},
+  explosivo:{hp:14,spd:3.8,r:0.55,dmg:30,xp:2,s:0.9,explode:1},
   jefe:     {hp:1800,spd:2.1,r:2,dmg:35,xp:80,s:3.6,boss:1},
 };
 export const PASSIVES = {
@@ -70,17 +70,17 @@ export const PETS = {
   gato: {name:'Gato recolector',icon:'🐈',color:0xffa040,desc:'Recoge objetos y araña'},
   dragon:{name:'Mini dragón',icon:'🐉',color:0xd03030,desc:'Escupe fuego'},
 };
-export const SKINS = {clasico:'Clásico',ninja:'Ninja',robot:'Robot',astronauta:'Astronauta',zombi:'Zombi',calabaza:'Calabaza',dorado:'Dorado'};
-export const HATS = {ninguno:'Ninguno',gorra:'Gorra',corona:'Corona',cuernos:'Cuernos',copa:'Chistera',halo:'Halo',vikingo:'Vikingo',helice:'Hélice'};
-export const ACCS = {ninguno:'Ninguno',gafas:'Gafas',capa:'Capa',mochila:'Mochila',bufanda:'Bufanda'};
-export const COLORS = [0x3a8cff,0xff4a4a,0x4ad06a,0xffc83a,0xb05aff,0xff7ac8,0x2ad8d8,0xf0f0f0,0x333344,0xff8a2a];
+export const SKINS = {marine:'Marine',comando:'Fuerzas especiales',pesado:'Artillero pesado',francotirador:'Francotirador',medico:'Médico de combate',superviviente:'Superviviente'};
+export const SKIN_BONUS = {marine:'Equilibrado',comando:'+8% velocidad',pesado:'+25 vida',francotirador:'+10% crítico',medico:'+0.5 regeneración',superviviente:'+15% imán'};
+export const CAMOS = {ninguno:['Original',[1,1,1]],desierto:['Desierto',[1.1,1.0,0.82]],artico:['Ártico',[1.25,1.28,1.35]],urbano:['Urbano',[0.86,0.9,1.0]],selva:['Selva',[0.82,1.08,0.78]],carmesi:['Carmesí',[1.25,0.78,0.75]],sombra:['Sombra',[0.6,0.6,0.72]],dorado:['Dorado',[1.35,1.12,0.6]]};
+export const TRAILS = {azul:['Estela azul',[0.3,0.6,1]],fuego:['Estela de fuego',[1,0.45,0.1]],toxica:['Estela tóxica',[0.4,1,0.2]],fantasma:['Estela fantasma',[0.85,0.85,1]],arcoiris:['Estela arcoíris',null]};
 export const WSKINS = {normal:'Normal',dorado:'Dorado',neon:'Neón',arcoiris:'Arcoíris',sombra:'Sombra'};
 export const SHOP = [
-  ...[['robot',250],['astronauta',300],['zombi',200],['calabaza',350],['dorado',800]].map(([id,p])=>({id,cat:'skin',name:SKINS[id],price:p})),
-  ...[['corona',300],['cuernos',150],['copa',200],['halo',400],['vikingo',250],['helice',350]].map(([id,p])=>({id,cat:'hat',name:HATS[id],price:p})),
-  ...[['capa',250],['mochila',150],['bufanda',120]].map(([id,p])=>({id,cat:'acc',name:ACCS[id],price:p})),
-  ...[['dorado',300],['neon',400],['arcoiris',700],['sombra',500]].map(([id,p])=>({id,cat:'wskin',name:'Armas: '+WSKINS[id],price:p})),
-  ...[['perro',400],['gato',350],['dron',600],['dragon',900]].map(([id,p])=>({id,cat:'pet',name:PETS[id].icon+' '+PETS[id].name,price:p,desc:PETS[id].desc})),
+  ...[['comando',300],['pesado',400],['francotirador',350],['medico',250]].map(([id,p])=>({id,cat:'skin',name:SKINS[id],price:p,desc:SKIN_BONUS[id]})),
+  ...[['desierto',100],['artico',200],['urbano',150],['selva',150],['carmesi',250],['sombra',300],['dorado',800]].map(([id,p])=>({id,cat:'camo',name:'Camuflaje '+CAMOS[id][0],price:p})),
+  ...[['fuego',200],['toxica',200],['fantasma',300],['arcoiris',600]].map(([id,p])=>({id,cat:'trail',name:TRAILS[id][0],price:p,desc:'Rastro al hacer dash'})),
+  ...[['dorado',300],['neon',400],['arcoiris',700],['sombra',500]].map(([id,p])=>({id,cat:'wskin',name:'Munición: '+WSKINS[id],price:p})),
+  ...[['perro',400],['gato',350],['dron',600],['dragon',900]].map(([id,p])=>({id,cat:'pet',name:PETS[id].name,price:p,desc:PETS[id].desc})),
   {id:'p_vida',cat:'perk',name:'❤️ Vida extra',price:200,desc:'+30 vida inicial'},
   {id:'p_fuerza',cat:'perk',name:'💪 Fuerza',price:300,desc:'+15% daño inicial'},
   {id:'p_iman',cat:'perk',name:'🧲 Imán',price:150,desc:'+50% radio de recogida'},
@@ -89,4 +89,5 @@ export const SHOP = [
   {id:'p_suerte',cat:'perk',name:'🍀 Suerte',price:350,desc:'+30% monedas'},
   {id:'p_revivir',cat:'perk',name:'👼 Segunda vida',price:900,desc:'Revives una vez por partida'},
 ];
-export const CATNAMES = {skin:'Aspectos',hat:'Sombreros',acc:'Accesorios',wskin:'Aspectos de armas',pet:'Mascotas',perk:'Ventajas iniciales'};
+export const CATNAMES = {skin:'Soldados',camo:'Camuflajes',trail:'Estelas de dash',wskin:'Munición',pet:'Compañeros',perk:'Ventajas iniciales'};
+export const ICONS = ['pistola','escopeta','subfusil','laser','cohete','lanzallamas','rayo','boomerang','cuchillas','congelador','plasma','minas','meteoro','nova','aura','minigun'];
