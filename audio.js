@@ -1,12 +1,12 @@
-// Sonido procedural con WebAudio: efectos + música generativa
-let ctx=null, master, sfxG, musG, noiseBuf, last={}, musicOn=true, musTimer=null, nextT=0, step=0, intensity=0;
+// Audio: muestras CC0 (Kenney) + capas procedurales WebAudio, ambiente en capas y música (ansimuz, CC0)
+let ambG=null,ctx=null, master, sfxG, musG, noiseBuf, last={}, musicOn=true, intensity=0;
 export function initAudio(){
   if(ctx){ if(ctx.state==='suspended') ctx.resume(); return; }
   const AC=window.AudioContext||window.webkitAudioContext; if(!AC) return;
   ctx=new AC(); master=ctx.createGain(); master.gain.value=0.6; master.connect(ctx.destination);
   const comp=ctx.createDynamicsCompressor(); comp.connect(master);
   sfxG=ctx.createGain(); sfxG.gain.value=0.5; sfxG.connect(comp);
-  musG=ctx.createGain(); musG.gain.value=0.2; musG.connect(comp);
+  musG=ctx.createGain(); musG.gain.value=0.2; musG.connect(master); ambG=ctx.createGain(); ambG.gain.value=0; ambG.connect(master); setTimeout(()=>{applyVolumes();loadBank();},0);
   noiseBuf=ctx.createBuffer(1,ctx.sampleRate,ctx.sampleRate); const d=noiseBuf.getChannelData(0); for(let i=0;i<d.length;i++) d[i]=Math.random()*2-1;
   try{ musicOn = localStorage.getItem('oleadas_music')!=='0'; }catch(e){}
 }
@@ -71,28 +71,73 @@ const SFX={
   click:()=>tone('sine',900,0,0.04,0.07),
   deny:()=>tone('square',200,150,0.15,0.06),
 };
+
+// ---- banco de muestras (variaciones + tono aleatorio) ----
+const BANK={
+  shoot:['shoot_a','shoot_b'],smg:['shoot_c','shoot_d'],shotgun:['shoot_g','shoot_e'],rocket:['shoot_h'],laser:['laser4'],rail:['laser9'],plasma:['phaserDown2'],freeze:['zapThreeToneDown'],
+  zap:['zap1','zap2'],whoosh:['woosh1','woosh2','woosh3'],dash:['woosh4','woosh3'],slash:['sword1','sword2','sword3','sword4'],
+  hit:['impactPunch_medium_0','impactPunch_medium_1','impactPunch_medium_2','impactSoft_medium_0','impactSoft_medium_1'],kill:['impactPunch_heavy_0','impactPunch_heavy_1','impactPunch_heavy_2'],
+  boom:['boom_a','boom_b','boom_c'],bossdie:['boom_b'],hurt:['hurt_a','hurt_b','hurt_c','hurt_d','hurt_e'],coin:['coin_a','coin_b','coin_c','coin_d'],pick:['pepSound1','pepSound2','pepSound3'],
+  heal:['powerUp3'],power:['powerUp7'],level:['powerUp12'],fusion:['phaserUp6'],crate:['impactWood_heavy_0','impactWood_heavy_1','impactWood_heavy_2'],tink:['impactMetal_light_0','impactMetal_light_1','impactMetal_light_2'],
+  metal:['impactMetal_heavy_0','impactMetal_heavy_1','impactMetal_heavy_2'],step:['footstep_concrete_0','footstep_concrete_1','footstep_concrete_2'],jump:['jump_a','jump_b'],land:['impactSoft_heavy_0','impactSoft_heavy_1','impactSoft_heavy_2'],
+  bite:['impactPunch_medium_1'],click:['click','impactGeneric_light_0'],deny:['deny'],wave:['threeTone1'],boss:['impactBell_heavy_0'],over:['over'],plank:['impactPlank_medium_0','impactPlank_medium_1'],
+  ui:['impactGeneric_light_1','impactGeneric_light_2'],spit:['spaceTrash2'],fuse:['twoTone1'],
+};
+// capa procedural extra para dar cuerpo (sub-graves, etc.)
+const LAYER={boom:1,bossdie:1,shotgun:1,rocket:1,rail:1,boss:1,bossatk:1,roar:1,groan:1,chitter:1,growl:1,flame:1,meteor:1,nova:1,horde:1,fuse:0,level:0,fusion:1};
+const VOL={step:0.35,pick:0.35,coin:0.5,hit:0.55,tink:0.4,smg:0.55,shoot:0.65,click:0.7,ui:0.6,kill:0.7,land:0.6,slash:0.6,plank:0.6};
+const buf={};let bankLoaded=false;
+async function loadBank(){if(bankLoaded)return;bankLoaded=true;const names=new Set(Object.values(BANK).flat());
+  await Promise.all([...names].map(async n=>{try{const r=await fetch('sounds/'+n+'.ogg');buf[n]=await ctx.decodeAudioData(await r.arrayBuffer());}catch(e){}}));}
+function play(name,vol=1,rate=1,dest=sfxG){const b=buf[name];if(!b)return false;const s=ctx.createBufferSource();s.buffer=b;s.playbackRate.value=rate;const g=ctx.createGain();g.gain.value=vol;s.connect(g);g.connect(dest);s.start();return true;}
+SFX.growl=()=>{const o=ctx.createOscillator(),g=ctx.createGain(),f=ctx.createBiquadFilter(),b=55+Math.random()*25;o.type='sawtooth';o.frequency.setValueAtTime(b,now());o.frequency.linearRampToValueAtTime(b*1.4,now()+0.25);o.frequency.linearRampToValueAtTime(b*0.8,now()+0.6);
+  const lfo=ctx.createOscillator(),lg=ctx.createGain();lfo.frequency.value=28;lg.gain.value=b*0.3;lfo.connect(lg);lg.connect(o.frequency);f.type='lowpass';f.frequency.value=700;g.gain.setValueAtTime(0.0001,now());g.gain.linearRampToValueAtTime(0.18,now()+0.08);g.gain.exponentialRampToValueAtTime(0.001,now()+0.7);
+  o.connect(f);f.connect(g);g.connect(D());o.start();lfo.start();o.stop(now()+0.75);lfo.stop(now()+0.75);};
+SFX.chitter=()=>{for(let i=0;i<7;i++)tone('square',1500+Math.random()*1400,600,0.03,0.035,sfxG,now()+i*0.035);tone('sine',300,900,0.25,0.05);};
 export function sfx(n,minGap=0.045){
   if(!ctx||ctx.state!=='running') return; const t=ctx.currentTime; if(last[n]&&t-last[n]<minGap) return; last[n]=t;
-  try{SFX[n]&&SFX[n]();}catch(e){}
+  try{const l=BANK[n];let ok=false;if(l)ok=play(l[Math.floor(Math.random()*l.length)],VOL[n]??0.85,0.92+Math.random()*0.16);
+    if(!ok||LAYER[n])SFX[n]&&SFX[n]();}catch(e){}
 }
-// ---- música ----
-const SCALE=[0,3,5,7,10,12,15,17];
-const PROG=[[40,0],[36,0],[38,0],[35,0]]; // A F G E (midi raíces)
-const mtof=m=>440*Math.pow(2,(m-69)/12);
-function schedule(){
-  const spb=60/(118+intensity*14)/2; // corcheas
-  while(nextT<ctx.currentTime+0.15){
-    const bar=Math.floor(step/16)%4, s=step%16, root=PROG[bar][0], t=nextT;
-    if(s%4===0) {tone('sine',60,30,0.25,0.5,musG,t); }
-    if(s%8===4) noise(0.15,0.25,1800,0.7,musG,t);
-    if(s%2===1) noise(0.04,0.12,8000,1,musG,t,'highpass');
-    if(s%2===0) tone('triangle',mtof(root-12+(s%8===6?7:0)),0,spb*1.8,0.25,musG,t);
-    if(intensity>0 || s%4!==3){ const n=SCALE[(s*3+bar*2+(s>8?2:0))%SCALE.length]; tone(intensity>1?'sawtooth':'square',mtof(root+12+n),0,spb*0.9,0.045,musG,t); }
-    nextT+=spb; step++;
-  }
-}
-export function startMusic(){ if(!ctx) return; stopMusic(); if(!musicOn) return; nextT=ctx.currentTime+0.1; step=0; musTimer=setInterval(schedule,40); }
-export function stopMusic(){ if(musTimer) clearInterval(musTimer); musTimer=null; }
-export function setIntensity(i){ intensity=i; }
-export function toggleMusic(){ musicOn=!musicOn; try{localStorage.setItem('oleadas_music',musicOn?'1':'0')}catch(e){} if(musicOn) startMusic(); else stopMusic(); return musicOn; }
+// voces de enemigos por familia
+export function voice(fam){sfx(fam==='alien'?'chitter':fam==='monstruo'?'growl':'groan',0.35);}
+
+// ---- ambiente en capas: viento, fuego lejano, escombros, dron inquietante ----
+let ambOn=false,ambNodes=[],ambTimer=null,ambLevel=0.5;
+function loopNoise(freq,q,type,vol,lfoRate,lfoDepth){const s=ctx.createBufferSource();s.buffer=noiseBuf;s.loop=true;const f=ctx.createBiquadFilter();f.type=type;f.frequency.value=freq;f.Q.value=q;
+  const g=ctx.createGain();g.gain.value=vol;const l=ctx.createOscillator(),lg=ctx.createGain();l.frequency.value=lfoRate;lg.gain.value=lfoDepth;l.connect(lg);lg.connect(f.frequency);
+  s.connect(f);f.connect(g);g.connect(ambG);s.start();l.start();ambNodes.push(s,l);}
+function drone(f,vol){for(const d of [-3,3]){const o=ctx.createOscillator();o.type='sine';o.frequency.value=f;o.detune.value=d*4;const g=ctx.createGain();g.gain.value=vol;o.connect(g);g.connect(ambG);o.start();ambNodes.push(o);}}
+export function startAmbience(level=0.5){if(!ctx)return;ambLevel=level;if(ambOn)return;ambOn=true;
+  loopNoise(420,0.8,'bandpass',0.5,0.07,260);   // viento
+  loopNoise(1400,2,'bandpass',0.08,0.13,600);   // silbido del viento
+  drone(55,0.05);drone(82.4,0.025);              // ciudad inquietante
+  ambTimer=setInterval(()=>{if(!ambOn)return;const r=Math.random();
+    if(r<0.5){for(let i=0;i<3+Math.random()*6;i++)noise(0.02,0.12*Math.random(),2500+Math.random()*2000,1,ambG,now()+Math.random()*0.6,'highpass');} // fuego que crepita
+    else if(r<0.62){const n=['metal','plank','tink'][Math.floor(Math.random()*3)];const l=BANK[n];play(l[Math.floor(Math.random()*l.length)],0.25,0.5+Math.random()*0.3,ambG);} // escombros lejanos
+    else if(r<0.66){tone('sine',40,25,1.5,0.25,ambG);noise(1.2,0.15,250,0.5,ambG);} // explosión lejana
+  },420);
+  fadeAmb();}
+export function stopAmbience(){ambOn=false;clearInterval(ambTimer);for(const n of ambNodes)try{n.stop()}catch(e){}ambNodes=[];}
+function fadeAmb(){if(ambG)ambG.gain.setTargetAtTime(ambOn?0.6*volA*ambLevel:0,ctx.currentTime,0.5);}
+export function setAmbienceLevel(l){ambLevel=l;fadeAmb();}
+
+// ---- música: pistas CC0 (menú / combate / jefe) con fundido cruzado ----
+const TRACKS={menu:'sounds/mus_menu.ogg',combat:'sounds/mus_combat.ogg',combat2:'sounds/mus_combat2.ogg',boss:'sounds/mus_boss.ogg'};
+const els={};let curTrack=null,wantTrack='menu',combatAlt=0;
+function el(k){if(els[k])return els[k];const a=new Audio(TRACKS[k]);a.loop=true;a.preload='auto';a.crossOrigin='anonymous';const src=ctx.createMediaElementSource(a);const g=ctx.createGain();g.gain.value=0;src.connect(g);g.connect(musG);return els[k]={a,g};}
+function switchTo(k,reset=true){if(!ctx)return;if(!musicOn){for(const t in els){els[t].g.gain.setTargetAtTime(0,ctx.currentTime,0.2);setTimeout(()=>els[t].a.pause(),900);}curTrack=null;return;}
+  if(curTrack===k)return;const prev=curTrack;curTrack=k;const e=el(k);if(reset&&k!=='menu'&&prev!==k)try{e.a.currentTime=0}catch(_){}
+  e.a.play().catch(()=>{});e.g.gain.cancelScheduledValues(ctx.currentTime);e.g.gain.setTargetAtTime(1,ctx.currentTime,0.6);
+  if(prev&&els[prev]){const p=els[prev];p.g.gain.cancelScheduledValues(ctx.currentTime);p.g.gain.setTargetAtTime(0,ctx.currentTime,0.5);setTimeout(()=>{if(curTrack!==prev)p.a.pause();},2500);}}
+export function startMusic(kind='combat',fresh=true){wantTrack=kind;if(!ctx)return;if(kind==='combat'){if(fresh)combatAlt^=1;switchTo(intensity>=2?'boss':combatAlt?'combat':'combat2',fresh);}else switchTo(kind);}
+export function stopMusic(){if(!ctx)return;for(const t in els)els[t].g.gain.setTargetAtTime(0,ctx.currentTime,0.25);const c=curTrack;curTrack=null;setTimeout(()=>{for(const t in els)if(t!==curTrack)els[t].a.pause();},1200);}
+export function setIntensity(i){const was=intensity;intensity=i;if(!ctx||!curTrack||curTrack==='menu')return;
+  if(i>=2&&curTrack!=='boss')switchTo('boss');else if(i<2&&curTrack==='boss')switchTo(combatAlt?'combat':'combat2');
+  // más intensidad = música un poco más rápida y brillante
+  for(const t in els)els[t].a.playbackRate=i>=1&&t!=='menu'?1.04:1;}
+export function toggleMusic(){ musicOn=!musicOn; try{localStorage.setItem('oleadas_music',musicOn?'1':'0')}catch(e){} if(musicOn) startMusic(wantTrack); else switchTo(null); return musicOn; }
 export function musicEnabled(){return musicOn}
+let volS=1,volM=1,volA=1;
+export function setVolumes(s,m,a=s){volS=s;volM=m;volA=a;if(sfxG){sfxG.gain.value=0.55*s;musG.gain.value=0.45*m;fadeAmb();}}
+export function applyVolumes(){setVolumes(volS,volM,volA);}

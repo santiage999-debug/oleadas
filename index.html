@@ -28,22 +28,29 @@
   <div class="panel hide" id="tab-fus"><div id="fusList"></div></div>
   <div class="panel hide" id="tab-info"><p><b>Muévete</b> con el joystick (mitad izquierda) o WASD/flechas. <b>Disparas solo</b> al enemigo más cercano. <b>Dash</b>: botón ⚡ o Espacio/Shift (te hace invulnerable un instante). Saltas solo sobre obstáculos bajos.</p><p>Abre <b>cajas de suministros</b> para conseguir armas (hasta 6). Recoge cristales para subir de nivel. Dos armas a nivel 3+ se pueden <b>fusionar</b>.</p><p>Las oleadas no terminan nunca. Cada 5 oleadas llega un <b>jefe</b>. Sobrevive y gana monedas para la tienda.</p><p id="best"></p></div>
  </div>
- <div class="mright"><button id="play" class="big">▶ ¡A JUGAR!</button></div>
+ <div class="mright"><button id="setB" class="ib gear" title="Ajustes">⚙</button>
+  <button id="modeB" class="modeb"><span id="modeIc" class="mic">🌊</span><span class="mtx"><small>MODO DE JUEGO ▸</small><b id="modeN">Oleadas infinitas</b></span></button>
+  <button id="play" class="big">▶ ¡A JUGAR!</button><div id="modeRec" class="mrec"></div></div>
 </div>
 <!-- HUD -->
 <div id="hud" class="hide">
  <div class="hl"><div class="hpw"><div class="lv"><span id="lvT">1</span></div><div class="bar hp"><i id="hpF"></i><span id="hpT"></span></div></div><div id="slots"></div><div id="pets"></div></div>
- <div class="hc"><div id="wave">OLEADA 1</div><div id="wsub"></div><div id="bossBar" class="hide"><span id="bossN"></span><div class="bar boss"><i id="bossF"></i></div></div><div id="streak"></div></div>
+ <div class="hc"><div id="modeTag"></div><div id="wave">OLEADA 1</div><div id="wsub"></div><div id="bossBar" class="hide"><span id="bossN"></span><div class="bar boss"><i id="bossF"></i></div></div><div id="genBar" class="hide"><span>⚡ GENERADOR</span><div class="bar gen"><i id="genF"></i></div></div><div id="streak"></div></div>
  <div class="hr"><div class="st">🪙 <span id="hCoins">0</span></div><div class="st">💀 <span id="hKills">0</span></div><div class="st">⏱ <span id="hTime">0:00</span></div><button id="musB" class="ib">♪</button><button id="pauseB" class="ib">II</button></div>
  <div class="bar xp"><i id="xpF"></i></div>
  <button id="dashB">⚡<small>DASH</small></button>
- <div id="fps"></div>
+ <div id="fps"></div><div id="zoomT"></div>
 </div>
 <div id="banner"></div><div id="toast"></div>
 <div id="joy"><div id="knob"></div></div>
 <div id="levelup" class="ov hide"><h2>¡ASCENSO!</h2><div id="cards"></div><div class="hint">Elige una mejora</div></div>
-<div id="pause" class="ov hide"><h2>PAUSA</h2><div id="pInfo"></div><div id="pFus"></div><div class="row c"><button id="resume" class="big">Continuar</button><button id="quit" class="sec">Abandonar</button></div></div>
-<div id="over" class="ov hide"><h2 class="red">CAÍDO EN COMBATE</h2><div id="oStats"></div><div class="row c"><button id="again" class="big">Reintentar</button><button id="toMenu" class="sec">Menú</button></div></div>
+<div id="pause" class="ov hide"><h2>PAUSA</h2><div id="pInfo"></div><div id="pFus"></div><div class="row c"><button id="resume" class="big">Continuar</button><button id="pSet" class="sec">⚙ Ajustes</button><button id="quit" class="sec">Abandonar</button></div></div>
+<div id="over" class="ov hide"><h2 id="oTitle" class="red">CAÍDO EN COMBATE</h2><div id="oStats"></div><div class="row c"><button id="again" class="big">Reintentar</button><button id="toMenu" class="sec">Menú</button></div></div>
+<div id="modes" class="ov hide"><div class="ovhead"><h2>ELIGE MODO</h2><button id="modeX" class="ib x">✕</button></div>
+ <div class="mwrap"><div id="modeGrid"></div><div id="modeSide"></div></div>
+ <div class="row c"><button id="modeOk" class="sec">Seleccionar</button><button id="modeGo" class="big">▶ ¡JUGAR!</button></div></div>
+<div id="settings" class="ov hide"><div class="ovhead"><h2>AJUSTES</h2><button id="setX" class="ib x">✕</button></div>
+ <div class="setwrap"><div id="setTabs"><button data-st="cam" class="on">🎥 Cámara</button><button data-st="gfx">✨ Gráficos</button><button data-st="snd">🔊 Sonido</button><button data-st="etc">⚙ Otros</button></div><div id="setBody"></div></div></div>
 <div id="rot">Gira el dispositivo para jugar en horizontal ↻</div>
 <script type="module" src="game.js"></script>
 </body></html>
