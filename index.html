@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="es"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="theme-color" content="#1a140f"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#1b2a6b"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes">
 <link rel="icon" href="data:,">
 <title>Oleadas: Zona Cero</title>
 <link rel="stylesheet" href="style.css">
-<script type="importmap">{"imports":{"three":"./vendor/three.module.js"}}</script>
+<script type="importmap">{"imports":{"three":"./vendor/three.module.js","three/addons/":"./vendor/addons/"}}</script>
 </head><body>
 <canvas id="c"></canvas>
 <div id="grade"></div><div id="hurt"></div><div id="lowhp"></div>
@@ -14,7 +14,7 @@
 <!-- MENÚ -->
 <div id="menu" class="hide">
  <div class="mleft">
-  <div class="mtop"><h1>OLEADAS</h1><div class="sub">ZONA CERO · SUPERVIVENCIA INFINITA</div></div>
+  <div class="mtop"><h1>OLEADAS</h1><div class="sub">ZONA CERO · ¡SUPERVIVENCIA SIN FIN!</div></div>
   <div class="coinsbar">🪙 <span id="mCoins">0</span></div>
   <div class="tabs"><button data-tab="pj" class="on">Soldado</button><button data-tab="shop">Tienda</button><button data-tab="arm">Arsenal</button><button data-tab="fus">Fusiones</button><button data-tab="info">Ayuda</button></div>
   <div class="panel" id="tab-pj">
@@ -28,7 +28,7 @@
   <div class="panel hide" id="tab-fus"><div id="fusList"></div></div>
   <div class="panel hide" id="tab-info"><p><b>Muévete</b> con el joystick (mitad izquierda) o WASD/flechas. <b>Disparas solo</b> al enemigo más cercano. <b>Dash</b>: botón ⚡ o Espacio/Shift (te hace invulnerable un instante). Saltas solo sobre obstáculos bajos.</p><p>Abre <b>cajas de suministros</b> para conseguir armas (hasta 6). Recoge cristales para subir de nivel. Dos armas a nivel 3+ se pueden <b>fusionar</b>.</p><p>Las oleadas no terminan nunca. Cada 5 oleadas llega un <b>jefe</b>. Sobrevive y gana monedas para la tienda.</p><p id="best"></p></div>
  </div>
- <div class="mright"><div id="hero"></div><button id="play" class="big">▶ DESPLEGAR</button></div>
+ <div class="mright"><button id="play" class="big">▶ ¡A JUGAR!</button></div>
 </div>
 <!-- HUD -->
 <div id="hud" class="hide">

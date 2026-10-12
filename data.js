@@ -40,9 +40,9 @@ export const FUSIONS = [
   ['escopeta','congelador','granizo'], ['nova','aura','sol'],
 ];
 export const FAMS = {
-  zombi:   {name:'Zombi',blood:[0.42,0.03,0.02],eye:0xff3a2a,boss:'Rey Zombi'},
-  monstruo:{name:'Mutante',blood:[0.32,0.06,0.38],eye:0xffd23a,boss:'Archidemonio'},
-  alien:   {name:'Alien',blood:[0.35,0.85,0.12],eye:0x7aff4a,boss:'Señor de la Colmena'},
+  zombi:   {name:'Zombi',blood:[0.45,0.78,0.22],eye:0xff3a2a,boss:'Rey Zombi'},
+  monstruo:{name:'Monstruo',blood:[0.62,0.3,0.85],eye:0xffd23a,boss:'Archidemonio'},
+  alien:   {name:'Alien',blood:[0.25,0.85,0.95],eye:0x7aff4a,boss:'Señor de la Colmena'},
 };
 export const ROLES = {
   normal:   {hp:20,spd:2.6,r:0.55,dmg:10,xp:1,s:1},
@@ -67,7 +67,7 @@ export const PASSIVES = {
 export const PETS = {
   perro:{name:'Perro guardián',icon:'🐕',color:0xc08040,desc:'Muerde enemigos cercanos'},
   dron: {name:'Dron de combate',icon:'🛸',color:0x9aa8c0,desc:'Dispara al enemigo más cercano'},
-  gato: {name:'Gato recolector',icon:'🐈',color:0xffa040,desc:'Recoge objetos y araña'},
+  gato: {name:'Pug recolector',icon:'🐶',color:0xffa040,desc:'Recoge objetos y muerde'},
   dragon:{name:'Mini dragón',icon:'🐉',color:0xd03030,desc:'Escupe fuego'},
 };
 export const SKINS = {marine:'Marine',comando:'Fuerzas especiales',pesado:'Artillero pesado',francotirador:'Francotirador',medico:'Médico de combate',superviviente:'Superviviente'};

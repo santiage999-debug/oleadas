@@ -1,7 +1,8 @@
-// Renderizador 2.5D: sprites realistas en billboard + decals en el suelo, todo instanciado
+// Efectos instanciados: partículas en billboard + decals en el suelo
 import * as THREE from 'three';
 
-export const FOG = new THREE.Color(0x9a8870);
+export const FOG = new THREE.Color(0xf3dcb4);
+export const FOG_NEAR=26, FOG_FAR=58;
 const VS_COMMON = `
 attribute vec3 iPos; attribute vec2 iSize; attribute vec4 iUV; attribute vec4 iCol; attribute vec3 iEx;
 varying vec2 vUv; varying vec4 vCol; varying float vFlash; varying float vFog;
@@ -34,10 +35,8 @@ void main(){
   ${mode==='cut' ? 'if(t.a<0.42) discard;' : ''}
   vec3 col = t.rgb * vCol.rgb;
   ${mode==='add' ? 'gl_FragColor = vec4(col * t.a * vCol.a * (1.0-vFog*0.7), 1.0); return;' : ''}
-  ${mode==='shadow' ? 'gl_FragColor = vec4(0.06,0.04,0.03, t.a*vCol.a*(1.0-vFog)); return;' : ''}
+  ${mode==='shadow' ? 'gl_FragColor = vec4(0.25,0.16,0.2, t.a*vCol.a*(1.0-vFog)); return;' : ''}
   col = mix(col, vec3(1.0,0.95,0.9), vFlash);
-  float g = dot(col, vec3(0.299,0.587,0.114));
-  col = mix(vec3(g), col, 0.82) * vec3(1.06,1.0,0.9);
   col = mix(col, fogColor, vFog);
   gl_FragColor = vec4(col, ${mode==='cut' ? '1.0' : 't.a*vCol.a'});
 }`;
@@ -51,7 +50,7 @@ export class Batch {
     const mk = (name, sz) => { const a = new THREE.InstancedBufferAttribute(new Float32Array(max * sz), sz); a.setUsage(THREE.DynamicDrawUsage); g.setAttribute(name, a); return a; };
     this.aPos = mk('iPos', 3); this.aSize = mk('iSize', 2); this.aUV = mk('iUV', 4); this.aCol = mk('iCol', 4); this.aEx = mk('iEx', 3);
     g.instanceCount = 0;
-    this.u = { map: { value: tex }, fogColor: { value: FOG }, fogNear: { value: 18 }, fogFar: { value: 40 } };
+    this.u = { map: { value: tex }, fogColor: { value: FOG }, fogNear: { value: FOG_NEAR }, fogFar: { value: FOG_FAR } };
     const m = new THREE.ShaderMaterial({
       uniforms: this.u, vertexShader: ground ? VS_GROUND : VS_BILL, fragmentShader: FS(mode),
       transparent: mode !== 'cut', depthWrite: mode === 'cut', depthTest: true,
