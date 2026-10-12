@@ -1,0 +1,35 @@
+name: Android APK
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: 22}
+      - uses: actions/setup-java@v4
+        with: {distribution: temurin, java-version: 21}
+      - run: npm install
+      - run: npm run build
+      - run: npx cap add android && npx cap sync android
+      - name: Pantalla completa y horizontal
+        run: |
+          M=android/app/src/main/AndroidManifest.xml
+          sed -i 's/<activity/<activity android:screenOrientation="sensorLandscape"/' $M
+          S=android/app/src/main/res/values/styles.xml
+          sed -i 's#</style>#<item name="android:windowFullscreen">true</item></style>#g' $S
+          grep -n screenOrientation $M
+      - run: cd android && chmod +x gradlew && ./gradlew assembleDebug --no-daemon
+      - run: cp android/app/build/outputs/apk/debug/app-debug.apk oleadas.apk
+      - uses: actions/upload-artifact@v4
+        with: {name: oleadas-apk, path: oleadas.apk}
+      - name: Publicar release v1.0.0
+        env: {GH_TOKEN: "${{ github.token }}"}
+        run: |
+          gh release view v1.0.0 >/dev/null 2>&1 || gh release create v1.0.0 --title "Oleadas v1.0.0" --notes "APK de depuración de Oleadas (Android). Instalar permitiendo orígenes desconocidos."
+          gh release upload v1.0.0 oleadas.apk --clobber

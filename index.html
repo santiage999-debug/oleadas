@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<link rel="icon" href="data:,">
+<title>Oleadas: Supervivencia Infinita</title>
+<link rel="stylesheet" href="style.css">
+<script type="importmap">{"imports":{"three":"./vendor/three.module.js"}}</script>
+</head><body>
+<canvas id="c"></canvas>
+<div id="dmg"></div>
+<!-- MENU -->
+<div id="menu" class="ov">
+ <div class="mtop"><h1>OLEADAS</h1><div class="sub">Supervivencia infinita</div><div class="coins">🪙 <span id="mCoins">0</span></div></div>
+ <div class="tabs"><button data-tab="pj" class="on">Personaje</button><button data-tab="shop">Tienda</button><button data-tab="fus">Fusiones</button><button data-tab="info">Cómo jugar</button></div>
+ <div class="panel" id="tab-pj">
+  <label>Nombre <input id="pName" maxlength="14"></label>
+  <div class="lbl">Color</div><div id="pColors" class="row"></div>
+  <div class="lbl">Aspecto</div><div id="pSkins" class="row"></div>
+  <div class="lbl">Sombrero</div><div id="pHats" class="row"></div>
+  <div class="lbl">Accesorio</div><div id="pAccs" class="row"></div>
+ </div>
+ <div class="panel hide" id="tab-shop"><div id="shopList"></div></div>
+ <div class="panel hide" id="tab-fus"><div id="fusList"></div></div>
+ <div class="panel hide" id="tab-info"><p>Muévete con <b>WASD</b> / <b>flechas</b> o el joystick táctil. ¡Las armas disparan solas al enemigo más cercano! Saltas automáticamente sobre obstáculos bajos.</p><p>Abre <b>cajas</b> para conseguir armas (hasta 6). Sube de nivel recogiendo cristales y elige mejoras. Con dos armas a nivel 3+ puedes <b>fusionarlas</b> en un arma épica.</p><p>Las oleadas no terminan nunca: cada 5 oleadas aparece un <b>jefe</b>. Sobrevive todo lo que puedas y gana monedas para la tienda.</p><p><b>P / Esc</b>: pausa · <b>M</b>: música</p><div id="best"></div></div>
+ <button id="play" class="big">▶ JUGAR</button>
+</div>
+<!-- HUD -->
+<div id="hud" class="hide">
+ <div class="hl"><div class="bar hp"><i id="hpF"></i><span id="hpT"></span></div><div id="slots"></div></div>
+ <div class="hc"><div id="wave">Oleada 1</div><div id="wsub"></div></div>
+ <div class="hr"><div>🪙 <span id="hCoins">0</span></div><div>💀 <span id="hKills">0</span></div><div>⏱ <span id="hTime">0:00</span></div><button id="pauseB">⏸</button><button id="musB">♪</button></div>
+ <div class="bar xp"><i id="xpF"></i><span id="xpT">Nv 1</span></div>
+ <div id="pets"></div>
+</div>
+<div id="banner"></div><div id="toast"></div>
+<div id="joy"><div id="knob"></div></div>
+<div id="levelup" class="ov hide"><h2>¡SUBES DE NIVEL!</h2><div id="cards"></div><div class="hint">Elige una (1/2/3)</div></div>
+<div id="pause" class="ov hide"><h2>PAUSA</h2><div id="pInfo"></div><h3>Recetas de fusión</h3><div id="pFus"></div><div class="row c"><button id="resume" class="big">Continuar</button><button id="quit">Abandonar</button></div></div>
+<div id="over" class="ov hide"><h2>HAS CAÍDO</h2><div id="oStats"></div><div class="row c"><button id="again" class="big">Reintentar</button><button id="toMenu">Menú</button></div></div>
+<script type="module" src="game.js"></script>
+</body></html>
